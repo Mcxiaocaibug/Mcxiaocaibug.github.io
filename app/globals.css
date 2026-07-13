@@ -579,6 +579,107 @@ a:focus-visible {
   font-size: 12px;
 }
 
+.recent-work {
+  display: grid;
+  grid-template-columns: minmax(190px, 0.34fr) minmax(0, 1fr);
+  gap: clamp(48px, 7vw, 112px);
+  margin-top: 100px;
+  padding-top: 42px;
+  border-top: 1px solid var(--ink);
+}
+
+.live-label {
+  display: flex;
+  gap: 9px;
+  align-items: center;
+  margin: 0 0 14px;
+  color: var(--maple);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+}
+
+.live-label span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--maple);
+  box-shadow: 0 0 0 4px rgba(169, 84, 73, 0.1);
+}
+
+.recent-work-intro h3 {
+  margin: 0;
+  font-size: clamp(25px, 2.3vw, 36px);
+  font-weight: 400;
+  letter-spacing: -0.05em;
+}
+
+.recent-work-intro > p:last-child {
+  margin: 12px 0 0;
+  color: var(--ink-soft);
+  font-size: 10px;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+}
+
+.activity-list {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.activity-list li {
+  border-bottom: 1px solid var(--line);
+}
+
+.activity-list a {
+  display: grid;
+  grid-template-columns: 82px 36px minmax(130px, 0.55fr) minmax(190px, 1fr) 18px;
+  gap: 18px;
+  align-items: center;
+  min-height: 68px;
+  font-size: 11px;
+  transition: padding 240ms ease, color 240ms ease;
+}
+
+.activity-list a:hover {
+  padding-left: 10px;
+  color: var(--maple);
+}
+
+.activity-list time {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.activity-action {
+  color: var(--maple);
+  font-size: 10px;
+}
+
+.activity-list strong {
+  overflow: hidden;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-list p {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink-soft);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-arrow {
+  transition: transform 220ms ease;
+}
+
+.activity-list a:hover .activity-arrow {
+  transform: translate(3px, -3px);
+}
+
 .stack-section {
   background: var(--paper-deep);
 }
@@ -759,6 +860,11 @@ a:focus-visible {
     gap: 62px;
   }
 
+  .recent-work {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
   .project-row {
     grid-template-columns: 38px minmax(170px, 0.8fr) minmax(260px, 1.2fr) 18px;
   }
@@ -770,7 +876,7 @@ a:focus-visible {
 
 @media (max-width: 720px) {
   :root {
-    --page: 100vw;
+    --page: 100%;
   }
 
   body {
@@ -906,6 +1012,33 @@ a:focus-visible {
 
   .project-arrow {
     grid-column: 3;
+    grid-row: 1;
+  }
+
+  .recent-work {
+    margin-top: 76px;
+    padding-top: 30px;
+  }
+
+  .activity-list a {
+    grid-template-columns: 68px 34px minmax(0, 1fr) 16px;
+    gap: 6px 10px;
+    min-height: 0;
+    padding: 16px 0;
+  }
+
+  .activity-list a:hover {
+    padding: 16px 0 16px 6px;
+  }
+
+  .activity-list p {
+    grid-column: 3 / -1;
+    line-height: 1.55;
+    white-space: normal;
+  }
+
+  .activity-arrow {
+    grid-column: 4;
     grid-row: 1;
   }
 

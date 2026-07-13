@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
+    "update:recent-work": "node scripts/update-recent-work.mjs",
     "build": "next build",
     "test": "npm run build",
     "lint": "eslint ."

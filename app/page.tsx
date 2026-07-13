@@ -1,3 +1,5 @@
+import recentWork from "./recent-work.json";
+
 const projects = [
   {
     index: "01",
@@ -252,6 +254,36 @@ export default function Home() {
           >
             浏览全部公开仓库 <span aria-hidden="true">↗</span>
           </a>
+
+          <section className="recent-work" aria-labelledby="recent-work-title">
+            <div className="recent-work-intro">
+              <p className="live-label">
+                <span aria-hidden="true" /> LIVE LOG
+              </p>
+              <h3 id="recent-work-title">最近在写</h3>
+              <p>
+                每小时同步 GitHub 公开活动
+                <br />
+                UPDATED {recentWork.updatedAtLabel}
+              </p>
+            </div>
+
+            <ol className="activity-list">
+              {recentWork.items.map((item) => (
+                <li key={`${item.dateTime}-${item.repo}-${item.url}`}>
+                  <a href={item.url} target="_blank" rel="noreferrer">
+                    <time dateTime={item.dateTime}>{item.time}</time>
+                    <span className="activity-action">{item.action}</span>
+                    <strong>{item.repo}</strong>
+                    <p>{item.title}</p>
+                    <span className="activity-arrow" aria-hidden="true">
+                      ↗
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
         </section>
 
         <section className="section stack-section" id="stack" aria-labelledby="stack-title">
