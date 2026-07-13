@@ -1,4 +1,4 @@
-# mcxiaocai666.github.io
+# Mcxiaocaibug.github.io
 
 Mcxiaocaibug 的个人网站：写代码，也写风与月。
 
