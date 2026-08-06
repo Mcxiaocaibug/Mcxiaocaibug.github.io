@@ -24,6 +24,8 @@
   --maple: #a13b2d;
   --maple-soft: #c98e80;
   --page: min(1440px, calc(100vw - 40px));
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * {
@@ -144,7 +146,7 @@ a:focus-visible {
   background: var(--maple);
   transform: scaleX(0);
   transform-origin: right;
-  transition: transform 220ms ease;
+  transition: transform 220ms var(--ease-standard);
 }
 
 .nav-links a:hover::after,
@@ -252,7 +254,9 @@ a:focus-visible {
   min-width: 190px;
   padding: 12px 0;
   border-bottom: 1px solid var(--ink);
-  transition: color 220ms ease, border-color 220ms ease;
+  transition:
+    color 220ms var(--ease-standard),
+    border-color 220ms var(--ease-standard);
 }
 
 .primary-link:hover {
@@ -262,19 +266,6 @@ a:focus-visible {
 
 .text-link {
   color: var(--ink-soft);
-}
-
-.text-link span,
-.header-github span,
-.all-projects-link span {
-  display: inline-block;
-  transition: transform 220ms ease;
-}
-
-.text-link:hover span,
-.header-github:hover span,
-.all-projects-link:hover span {
-  transform: translate(3px, -3px);
 }
 
 .hero-visual {
@@ -522,7 +513,10 @@ a:focus-visible {
   align-items: center;
   min-height: 144px;
   border-bottom: 1px solid var(--line);
-  transition: padding 280ms ease, color 280ms ease, background-color 280ms ease;
+  transition:
+    padding 280ms var(--ease-standard),
+    color 280ms var(--ease-standard),
+    background-color 280ms var(--ease-standard);
 }
 
 .project-row:hover {
@@ -561,11 +555,6 @@ a:focus-visible {
 
 .project-arrow {
   font-size: 16px;
-  transition: transform 220ms ease;
-}
-
-.project-row:hover .project-arrow {
-  transform: translate(4px, -4px);
 }
 
 .all-projects-link {
@@ -639,7 +628,9 @@ a:focus-visible {
   align-items: center;
   min-height: 68px;
   font-size: 11px;
-  transition: padding 240ms ease, color 240ms ease;
+  transition:
+    padding 240ms var(--ease-standard),
+    color 240ms var(--ease-standard);
 }
 
 .activity-list a:hover {
@@ -670,14 +661,6 @@ a:focus-visible {
   color: var(--ink-soft);
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.activity-arrow {
-  transition: transform 220ms ease;
-}
-
-.activity-list a:hover .activity-arrow {
-  transform: translate(3px, -3px);
 }
 
 .stack-section {
@@ -1083,5 +1066,378 @@ a:focus-visible {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ——— Motion system modeled on kimi.com/features/webbridge ———
+   Expo-out reveals (cubic-bezier(0.16, 1, 0.3, 1)), masked hero lines,
+   rolling link arrows, a slow marquee, a word rotator and ambient hero
+   layers — all without external animation libraries.
+   All motion respects prefers-reduced-motion.
+   ----------------------------------------------------------------- */
+
+/* Scroll reveal: content is only hidden when JS is present.
+   "rise" matches WebBridge's FadeInModule (30px over 0.9s); "rotate" adds
+   its 1.5deg turn from the bottom-left corner over 1.05s. */
+html[data-js] .reveal:not([data-visible="true"]) {
+  opacity: 0;
+}
+
+html[data-js] .reveal-rise:not([data-visible="true"]) {
+  transform: translateY(30px);
+}
+
+html[data-js] .reveal-rotate:not([data-visible="true"]) {
+  transform: translateY(24px) rotate(1.5deg);
+}
+
+.reveal {
+  transition:
+    opacity 900ms var(--ease-out-expo),
+    transform 900ms var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal-rotate {
+  transform-origin: 0 100%;
+  transition-duration: 1050ms;
+}
+
+/* Hero: staged entrance with per-element delays. The title uses masked
+   lines that slide up out of an overflow window; the rest rises softly. */
+.hero-enter {
+  animation: hero-rise 1050ms var(--ease-out-expo) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(34px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mask-line {
+  display: block;
+  overflow: hidden;
+}
+
+.mask-line-inner {
+  display: block;
+  will-change: transform;
+  animation: mask-line-rise 1150ms var(--ease-out-expo) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+@keyframes mask-line-rise {
+  from {
+    transform: translateY(114%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Word rotator: stacked inline-grid words that cycle in place. */
+.rotator {
+  display: inline-grid;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: 1.5;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.rotator-word {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(105%);
+  transition:
+    opacity 460ms ease,
+    transform 640ms var(--ease-out-expo);
+}
+
+.rotator-word[data-active] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.rotator-word[data-past] {
+  transform: translateY(-105%);
+}
+
+html:not([data-js]) .rotator-word:first-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html:not([data-js]) .rotator-word:not(:first-child) {
+  display: none;
+}
+
+/* Link arrows: on hover the glyph rolls out while its twin slides in —
+   the WebBridge CTA arrow pattern, done with two stacked copies. */
+.arrow-swap {
+  --ax: 1.05em;
+  --ay: -1.05em;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  vertical-align: -0.12em;
+}
+
+.arrow-swap[data-direction="down"] {
+  --ax: 0em;
+  --ay: 1.05em;
+}
+
+.arrow-swap > span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transition: transform 520ms var(--ease-out-expo);
+}
+
+.arrow-swap > span:last-child {
+  transform: translate(calc(var(--ax) * -1), calc(var(--ay) * -1));
+}
+
+a:hover .arrow-swap > span:first-child {
+  transform: translate(var(--ax), var(--ay));
+}
+
+a:hover .arrow-swap > span:last-child {
+  transform: translate(0, 0);
+}
+
+/* Marquee: a slow, quiet strip in the spirit of WebBridge's command reel.
+   The track holds two identical copies and scrolls by half its width. */
+.marquee {
+  overflow: hidden;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee-scroll 48s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-copy {
+  display: flex;
+  gap: clamp(40px, 6vw, 88px);
+  align-items: center;
+  padding-right: clamp(40px, 6vw, 88px);
+  color: var(--ink-soft);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.marquee-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--maple-soft);
+  border-radius: 50%;
+}
+
+@keyframes marquee-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Hero: ambient stars that gently twinkle like WebBridge's sky layer. */
+.hero-star {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--maple-soft);
+  opacity: 0.35;
+  animation: star-twinkle 4.6s ease-in-out infinite;
+}
+
+.hero-star:nth-of-type(1) {
+  top: 12%;
+  left: 18%;
+  animation-delay: 0s;
+}
+
+.hero-star:nth-of-type(2) {
+  top: 30%;
+  right: 12%;
+  animation-delay: 1.2s;
+}
+
+.hero-star:nth-of-type(3) {
+  bottom: 24%;
+  left: 8%;
+  animation-delay: 2.1s;
+}
+
+.hero-star:nth-of-type(4) {
+  top: 8%;
+  right: 30%;
+  width: 3px;
+  height: 3px;
+  animation-delay: 0.7s;
+}
+
+.hero-star:nth-of-type(5) {
+  bottom: 40%;
+  right: 24%;
+  animation-delay: 1.8s;
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: scale(0.7);
+  }
+
+  50% {
+    opacity: 0.55;
+    transform: scale(1.15);
+  }
+}
+
+/* Moon and code note: slow, out-of-phase floating. */
+.moon {
+  animation: moon-drift 12s ease-in-out infinite;
+}
+
+@keyframes moon-drift {
+  0%,
+  100% {
+    transform: translateX(-42%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-42%) translateY(-14px);
+  }
+}
+
+.moon-dot {
+  animation: dot-breathe 3.2s ease-in-out infinite;
+}
+
+@keyframes dot-breathe {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+.code-note {
+  animation: note-drift 14s ease-in-out infinite;
+}
+
+@keyframes note-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(10px);
+  }
+}
+
+/* Scroll cue: a small traveling line that invites scrolling. */
+.scroll-cue span {
+  position: relative;
+  overflow: hidden;
+}
+
+.scroll-cue span::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: var(--maple);
+  transform: translateX(-100%);
+  animation: cue-sweep 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes cue-sweep {
+  40% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Live / eyebrow dot: a soft radial pulse. */
+.live-label span,
+.eyebrow > span {
+  animation: live-pulse 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes live-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(161, 59, 45, 0.28);
+  }
+
+  70% {
+    box-shadow: 0 0 0 9px rgba(161, 59, 45, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(161, 59, 45, 0);
+  }
+}
+
+/* Reduced motion: disable all reveals, swaps and ambient loops. */
+@media (prefers-reduced-motion: reduce) {
+  html[data-js] .reveal:not([data-visible="true"]) {
+    opacity: 1;
+    transform: none;
+  }
+
+  .hero-enter,
+  .mask-line-inner {
+    animation: none;
+  }
+
+  .arrow-swap > span {
+    transition: none;
+  }
+
+  .moon,
+  .moon-dot,
+  .code-note,
+  .hero-star,
+  .marquee-track,
+  .live-label span,
+  .eyebrow > span,
+  .scroll-cue span::after {
+    animation: none !important;
   }
 }

@@ -55,7 +55,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.dataset.js = ''",
+          }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
