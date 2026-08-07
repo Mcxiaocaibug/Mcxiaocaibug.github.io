@@ -33,7 +33,7 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Update recent work
         run: node scripts/update-recent-work.mjs
@@ -46,7 +46,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./.next-gh
+          path: ./build
 
   deploy:
     environment:

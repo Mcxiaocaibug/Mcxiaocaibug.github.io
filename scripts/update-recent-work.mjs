@@ -3,7 +3,7 @@ import { dirname, resolve } from "node:path";
 
 const username = "Mcxiaocaibug";
 const profileRepository = `${username}/${username}`.toLowerCase();
-const outputPath = resolve("app/recent-work.json");
+const outputPath = resolve("src/lib/recent-work.json");
 const timeZone = "Asia/Shanghai";
 const maximumItems = 5;
 

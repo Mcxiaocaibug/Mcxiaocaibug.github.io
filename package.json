@@ -2,31 +2,26 @@
   "name": "mcxiaocaibug-portfolio",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "engines": {
     "node": ">=22.13.0"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "lint": "npm run check",
     "update:recent-work": "node scripts/update-recent-work.mjs",
-    "build": "next build",
-    "test": "npm run build",
-    "lint": "eslint ."
-  },
-  "dependencies": {
-    "next": "16.2.10",
-    "react": "19.2.7",
-    "react-dom": "19.2.7"
+    "test": "npm run build"
   },
   "devDependencies": {
-    "@types/node": "22.19.19",
-    "@types/react": "19.2.17",
-    "@types/react-dom": "19.2.3",
-    "eslint": "9.39.4",
-    "eslint-config-next": "16.2.10",
-    "typescript": "5.9.3"
-  },
-  "overrides": {
-    "postcss": "8.5.10"
-  },
-  "type": "module"
+    "@sveltejs/adapter-static": "^3.0.8",
+    "@sveltejs/kit": "^2.22.0",
+    "@sveltejs/vite-plugin-svelte": "^5.1.0",
+    "svelte": "^5.38.0",
+    "svelte-check": "^4.3.1",
+    "typescript": "^5.9.2",
+    "vite": "^6.3.5"
+  }
 }
