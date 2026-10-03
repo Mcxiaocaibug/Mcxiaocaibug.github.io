@@ -12,10 +12,14 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "lint": "npm run check",
-    "update:recent-work": "node scripts/update-recent-work.mjs",
-    "test": "npm run build"
+    "update:recent-work": "node --experimental-strip-types scripts/update-recent-work.mjs",
+    "test": "npm run test:unit && npm run build",
+    "test:motion": "node --experimental-strip-types --test tests/motion.test.ts",
+    "build:visuals": "python3 scripts/build-visuals.py && node scripts/render-social.mjs",
+    "test:unit": "node --experimental-strip-types --test tests/*.test.ts"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.22.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",

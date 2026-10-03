@@ -5,21 +5,34 @@
   type Props = {
     words: string[];
     interval?: number;
+    paused?: boolean;
   };
 
-  let { words, interval = 2600 }: Props = $props();
+  let { words, interval = 2600, paused = false }: Props = $props();
 
   let index = $state(0);
   let previous = $derived((index - 1 + words.length) % words.length);
 
   $effect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const timer = window.setInterval(() => {
-      index = (index + 1) % words.length;
-    }, interval);
-
-    return () => window.clearInterval(timer);
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let timer: number | undefined;
+    function sync() {
+      window.clearInterval(timer);
+      if (media.matches || paused || document.hidden || words.length < 2)
+        return;
+      timer = window.setInterval(() => {
+        index = (index + 1) % words.length;
+      }, interval);
+    }
+    void paused;
+    sync();
+    media.addEventListener("change", sync);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      window.clearInterval(timer);
+      media.removeEventListener("change", sync);
+      document.removeEventListener("visibilitychange", sync);
+    };
   });
 </script>
 
